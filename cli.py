@@ -43,9 +43,13 @@ def main():
                         help='remote start drive')
     parser.add_argument('-d', '--debug', action='store_true',
                         help='set logging level to debug')
+    parser.add_argument('-q', '--quiet', action='store_true',
+                        help='set logging level to error')
     args = parser.parse_args()
     default_format = '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-    logging.basicConfig(level=logging.DEBUG if args.debug else logging.INFO,
+    loglevel = logging.DEBUG if args.debug else logging.INFO
+    loglevel = logging.CRITICAL if args.quiet else loglevel
+    logging.basicConfig(level=loglevel,
                         format=default_format)
     if args.password == '':
         password = getpass.getpass('Password: ')
@@ -59,7 +63,6 @@ def main():
             selected = [c for c in cars for v in c.values() if v == args.filter]
         logging.info('%d vehicle(s), %d selected', len(cars), len(selected))
         for i, vehicle in enumerate(selected):
-            print('Vehicle %d:' % i)
             if args.list:
                 print(vehicle)
             if args.option:

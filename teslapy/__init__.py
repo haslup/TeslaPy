@@ -252,6 +252,7 @@ class Tesla(requests.Session):
             with open('cache.json') as infile:
                 cache = json.load(infile)
         except (IOError, ValueError):
+            logger.exception("could not open cache")
             cache = {}
         # Write token to cache file
         if self.authorized:
@@ -261,7 +262,7 @@ class Tesla(requests.Session):
                 with open('cache.json', 'w') as outfile:
                     json.dump(cache, outfile)
             except IOError:
-                logger.error('Cache not updated')
+                logger.exception('Cache not updated')
             else:
                 logger.debug('Updated cache')
         # Read token from cache
@@ -361,7 +362,7 @@ class JsonDict(dict):
 
     def __str__(self):
         """ Serialize dict to JSON formatted string with indents """
-        return json.dumps(self, indent=4)
+        return json.dumps(self)
 
 
 class Vehicle(JsonDict):
